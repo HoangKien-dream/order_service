@@ -7,30 +7,37 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDate;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Orders")
-public class Order {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int totalPrice;
-    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    Set<OrderDetail> orderDetails;
-    private String orderStatus;
-    private String inventoryStatus;
-    private String paymentStatus;
-    private int userId;
+    private String name;
+    private int price;
+    private  String thumbnail;
+    private String description;
+    private int status;
     @CreationTimestamp
     private LocalDate createdAt;
     @UpdateTimestamp
     private LocalDate updatedAt;
     private LocalDate deletedAt;
+
+    public Product( String name, int price, String thumbnail, String description, int status) {
+        this.name = name;
+        this.price = price;
+        this.thumbnail = thumbnail;
+        this.description = description;
+        this.status = status;
+    }
 }
