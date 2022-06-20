@@ -31,7 +31,7 @@ public class OrderController {
        Order order1 = orderService.save(order);
        OrderEvent orderEvent = new OrderEvent(order1);
         Gson gson = new Gson();
-        rabbitTemplate.convertAndSend(MessageConfig.DIRECT_EXCHANGE,MessageConfig.DIRECT_SHARE_ROUTING_KEY, gson.toJson(orderEvent));
+        rabbitTemplate.convertAndSend(MessageConfig.DIRECT_EXCHANGE,MessageConfig.DIRECT_SHARE_ROUTING_KEY, orderEvent);
          return order1;
     }
 }

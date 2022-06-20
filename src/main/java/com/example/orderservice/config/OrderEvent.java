@@ -22,6 +22,7 @@ public class OrderEvent {
     public String statusInventory;
     public String statusOrder;
     public String statusPayment;
+    public String queueName;
 
     public OrderEvent(Order order) {
         this.orderId = order.getId();
