@@ -14,6 +14,7 @@ public class ReceiveMessage {
     ConsumerService consumerService;
     @RabbitListener(queues = {QUEUE_ORDER})
     public void getMessage(OrderEvent orderEvent) {
+        System.out.println(orderEvent);
        consumerService.getMessage(orderEvent);
     }
 }

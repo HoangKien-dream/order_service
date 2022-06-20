@@ -21,22 +21,35 @@ public class ConsumerService {
          if(orderEvent.getQueueName().equals("QUEUE_PAY")){
             order.setPaymentStatus(orderEvent.getStatusPayment());
          }
-         handleOrder(order);
+         handleOrder( repositoryOrder.save(order));
      }
 
      public void handleOrder(Order order){
-         if(order.getInventoryStatus().equals(Status.InventoryStatus.OUT_OF_STOCK.name())){
+         if(order.getInventoryStatus().equals(Status.InventoryStatus.OUT_OF_STOCK.name())
+             && order.getPaymentStatus().equals(Status.PaymentStatus.DONE.name())){
              order.setOrderStatus(Status.OrderStatus.CANCEL.name());
              rabbitTemplate.convertAndSend(MessageConfig.DIRECT_EXCHANGE,MessageConfig.DIRECT_ROUTING_KEY_PAY, new OrderEvent(order));
+             return;
          }
-         if (order.getPaymentStatus().equals(Status.PaymentStatus.NOT_ENOUGH_BALANCE.name())){
+         if (order.getPaymentStatus().equals(Status.PaymentStatus.NOT_ENOUGH_BALANCE.name())
+              && order.getInventoryStatus().equals(Status.InventoryStatus.DONE.name())){
              order.setOrderStatus(Status.OrderStatus.CANCEL.name());
              rabbitTemplate.convertAndSend(MessageConfig.DIRECT_EXCHANGE,MessageConfig.DIRECT_ROUTING_KEY_INVENTORY, new OrderEvent(order));
+             return;
          }
-         if (order.getPaymentStatus().equals(Status.PaymentStatus.DONE.name())
-                 && order.getInventoryStatus().equals(Status.InventoryStatus.DONE.name()) ){
-             order.setOrderStatus(Status.OrderStatus.DONE.name());
+         if (order.getPaymentStatus().equals(Status.PaymentStatus.REFUNDED.name())
+                 && order.getInventoryStatus().equals(Status.InventoryStatus.OUT_OF_STOCK.name())){
+             order.setOrderStatus(Status.OrderStatus.CANCEL.name());
+             repositoryOrder.save(order);
+             return;
          }
+         if (order.getPaymentStatus().equals(Status.PaymentStatus.NOT_ENOUGH_BALANCE.name())
+                 && order.getInventoryStatus().equals(Status.InventoryStatus.RETURNED.name())){
+             order.setOrderStatus(Status.OrderStatus.CANCEL.name());
+             repositoryOrder.save(order);
+             return;
+         }
+         order.setOrderStatus(Status.OrderStatus.DONE.name());
          repositoryOrder.save(order);
      }
 }
