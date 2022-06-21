@@ -8,6 +8,9 @@ import com.example.orderservice.enums.Status;
 import com.example.orderservice.repository.RepositoryOrder;
 import com.example.orderservice.repository.RepositoryProduct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -41,5 +44,11 @@ public class OrderService {
         order.setTotalPrice(totalPrice);
         order.setOrderDetails(orderDetailSet);
         return repositoryOrder.save(order);
+    }
+
+    public Page<Order> findAll(int page, int limit,
+                               Specification<Order> orderSpecification) {
+        return repositoryOrder.findAll(
+                orderSpecification, PageRequest.of(page - 1, limit));
     }
 }
