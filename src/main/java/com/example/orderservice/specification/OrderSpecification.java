@@ -1,5 +1,6 @@
 package com.example.orderservice.specification;
 
+import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.OrderDetail;
 import com.example.orderservice.entity.Product;
 import org.springframework.data.jpa.domain.Specification;

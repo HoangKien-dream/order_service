@@ -23,6 +23,8 @@ public class OrderService {
     @Autowired
     RepositoryProduct repositoryProduct;
 
+
+
     public Order save(Order order){
         int totalPrice = 0;
         Set<OrderDetail> orderDetailSet = new HashSet<>();
@@ -50,5 +52,13 @@ public class OrderService {
                                Specification<Order> orderSpecification) {
         return repositoryOrder.findAll(
                 orderSpecification, PageRequest.of(page - 1, limit));
+    }
+
+    public Order findById(int id){
+        Order order = repositoryOrder.findById(id).orElse(null);
+        if (order != null){
+            return order;
+        }
+        return null;
     }
 }
