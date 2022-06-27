@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")
@@ -26,7 +27,6 @@ public class OrderController {
     OrderService orderService;
     @Autowired
     RabbitTemplate rabbitTemplate;
-
     @RequestMapping(method = RequestMethod.POST)
     public Order create(@RequestBody Order order){
        Order order1 = orderService.save(order);
@@ -35,6 +35,7 @@ public class OrderController {
         rabbitTemplate.convertAndSend(MessageConfig.DIRECT_EXCHANGE,MessageConfig.DIRECT_SHARE_ROUTING_KEY, orderEvent);
          return order1;
     }
+    @PreAuthorize("hasAuthority('list_order')")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> findAll(
             @RequestParam(defaultValue = "1") int page,
